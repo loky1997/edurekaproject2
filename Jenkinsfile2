@@ -1,0 +1,36 @@
+pipeline {
+    agent any
+    stages {
+        stage('getting the code') {
+            steps {
+                git credentialsId: 'c9846ac6-1c00-4251-a45b-fb1676d8a1d4', url: 'https://github.com/loky1997/edurekaproject2.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'Running build automation'
+                sh 'npm install'
+            }
+        }
+      stage('docker Build') {
+            steps { 
+                sh "docker build -t lokeshhs591/project2.1 ."
+            }
+        }
+        stage('docker push') {
+            steps { 
+                withCredentials([string(credentialsId: 'dockerhub', variable: 'DOCKER_HUB')]) {
+                 sh "docker login -u lokeshhs591 -p ${DOCKER_HUB}"
+                 }
+              sh "docker push lokeshhs591/project2.1"
+             /** sh "docker run -d -p 8082:8082 --name=project2.1  lokeshhs591/project2.1" **/
+            }
+        }
+        stage('ddeploy in K8 cluster') {
+            steps { 
+                sh "kubectl apply -f train-schedule-kube.yml"
+            }
+        }
+        
+    }
+}
