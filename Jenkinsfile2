@@ -28,7 +28,7 @@ pipeline {
         }
         stage('ddeploy in K8 cluster') {
             steps { 
-                sh "kubectl apply -f train-schedule-kube.yml"
+                sh "kubectl apply -f train-schedule-kube-canary.yml"
             }
         }
         
