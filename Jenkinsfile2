@@ -28,7 +28,6 @@ pipeline {
         }
         stage('ddeploy in K8 cluster') {
             steps { 
-                sh "sudo su -"
                 sh "kubectl apply -f train-schedule-kube.yml"
             }
         }
